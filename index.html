@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liqui — RetroAchievements on Real Hardware</title>
+<meta name="author" content="Liqui">
+<meta name="description" content="RetroAchievements on real NES and Mega Drive hardware. Two tools, one idea: a custom FPGA core reads the console's bus while the game runs, so achievements unlock on the actual machine.">
+<link rel="canonical" href="https://liquid-wq.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Liqui">
+<meta property="og:title" content="RetroAchievements on Real Hardware">
+<meta property="og:description" content="Two tools, one idea: earn RetroAchievements on an actual NES or Mega Drive.">
+<meta property="og:url" content="https://liquid-wq.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RetroAchievements on Real Hardware">
+<meta name="twitter:description" content="Two tools, one idea: earn RetroAchievements on an actual NES or Mega Drive.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070605;
+  --ink:#d9cfc4;
+  --ink-dim:#7d7267;
+  --line:#221a15;
+  /* zwei Phosphorfarben: gruen fuer den NES, bernstein fuer das Mega Drive */
+  --nes:#38e07b;
+  --nes-deep:#0a1a10;
+  --md:#ffb454;
+  --md-deep:#1a1008;
+  --red:#ff5a3c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+body{
+  margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;
+  position:relative;overflow-x:hidden;
+}
+/* CRT-Zeilen ueber der ganzen Seite */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.26) 2px 3px);
+  mix-blend-mode:multiply;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:8;
+  background:radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(0,0,0,.6) 100%);
+}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px;position:relative;z-index:1;width:100%}
+a:focus-visible{outline:2px solid var(--md);outline-offset:4px}
+
+header{padding:64px 0 8px;text-align:center}
+.eyebrow{
+  font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-dim);margin:0;
+}
+.eyebrow .slash{color:var(--red);font-weight:700}
+h1{
+  font-size:clamp(20px,3.4vw,30px);letter-spacing:.02em;font-weight:500;
+  margin:22px 0 0;color:var(--ink);line-height:1.45;
+}
+h1 b{color:var(--md);font-weight:500}
+h1 i{color:var(--nes);font-style:normal;font-weight:500}
+.sub{max-width:60ch;margin:20px auto 0;color:var(--ink-dim);font-size:15.5px}
+
+/* ---------- die beiden Kacheln ---------- */
+main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
+.picks{display:grid;gap:20px;width:100%}
+@media(min-width:820px){.picks{grid-template-columns:1fr 1fr}}
+
+.pick{
+  position:relative;display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line);padding:34px 28px 30px;overflow:hidden;
+  transition:border-color .18s,transform .18s,box-shadow .18s;
+}
+.pick::before{
+  content:'';position:absolute;inset:0;opacity:.45;transition:opacity .18s;
+  background:radial-gradient(ellipse at 50% 120%,var(--glow) 0%,transparent 70%);
+}
+.pick:hover,.pick:focus-visible{transform:translateY(-3px)}
+.pick:hover::before,.pick:focus-visible::before{opacity:1}
+
+.pick--nes{--glow:rgba(56,224,123,.16)}
+.pick--nes:hover,.pick--nes:focus-visible{border-color:var(--nes);box-shadow:0 0 34px rgba(56,224,123,.16)}
+.pick--md{--glow:rgba(255,180,84,.16)}
+.pick--md:hover,.pick--md:focus-visible{border-color:var(--md);box-shadow:0 0 34px rgba(255,180,84,.16)}
+
+.pick__console{
+  position:relative;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-dim);margin:0 0 18px;
+}
+.logo{
+  position:relative;font-family:'Press Start 2P',monospace;
+  font-size:clamp(19px,3.4vw,29px);line-height:1.25;letter-spacing:.02em;margin:0;
+}
+.pick--nes .logo{color:var(--nes);text-shadow:0 0 8px rgba(56,224,123,.5),0 0 24px rgba(56,224,123,.28)}
+.pick--md .logo{color:var(--md);text-shadow:0 0 8px rgba(255,180,84,.5),0 0 24px rgba(255,90,60,.28)}
+
+.pick__text{position:relative;margin:20px 0 0;font-size:14.5px;line-height:1.72;color:var(--ink-dim)}
+.pick__text b{color:var(--ink);font-weight:500}
+
+.pick__go{
+  position:relative;display:inline-block;margin:22px 0 0;font-size:14px;
+  border-bottom:1px solid transparent;transition:border-color .18s;
+}
+.pick--nes .pick__go{color:var(--nes)}
+.pick--md .pick__go{color:var(--md)}
+.pick:hover .pick__go{border-color:currentColor}
+
+/* ---------- gemeinsamer Unterbau ---------- */
+.shared{
+  border-top:1px solid var(--line);margin-top:44px;padding:34px 0 0;
+  display:grid;gap:22px;
+}
+@media(min-width:760px){.shared{grid-template-columns:repeat(3,1fr)}}
+.shared h2{
+  font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-dim);margin:0 0 8px;font-weight:500;
+}
+.shared h2::before{content:'# ';color:var(--red);font-weight:700}
+.shared p{margin:0;font-size:14px;line-height:1.7;color:var(--ink-dim)}
+
+footer{padding:40px 0 56px;color:var(--ink-dim);font-size:14px;text-align:center}
+footer a{color:var(--md);text-decoration:none;border-bottom:1px solid var(--line)}
+footer a:hover{border-color:var(--md)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow"><span class="slash">//</span> EverDrive &middot; FPGA &middot; RetroAchievements</p>
+    <h1>Earn RetroAchievements on an actual <i>NES</i> or <b>Mega Drive</b>.</h1>
+    <p class="sub">
+      No emulator, no ROM patch. A custom FPGA core inside the flash cartridge reads
+      the console's bus while the game runs, and your PC evaluates the achievement
+      conditions from what it sees. Pick your console.
+    </p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="picks">
+
+      <a class="pick pick--nes" href="https://liquid-wq.github.io/raw-nes/">
+        <p class="pick__console">Nintendo Entertainment System</p>
+        <p class="logo">RAW-NES</p>
+        <p class="pick__text">
+          For the <b>EverDrive N8 PRO</b>. The core mirrors the NES's internal RAM in
+          real time as the CPU writes to it, so the game runs exactly as it would
+          without it.
+        </p>
+        <span class="pick__go">Open RAW-NES &rsaquo;</span>
+      </a>
+
+      <a class="pick pick--md" href="https://liquid-wq.github.io/mega-raw/">
+        <p class="pick__console">Mega Drive &middot; Genesis</p>
+        <p class="logo">MEGA-RAW</p>
+        <p class="pick__text">
+          For the <b>Mega EverDrive</b>. The cartridge identifies itself, so there is
+          nothing to select — and it brings its own in-game save state menu along.
+        </p>
+        <span class="pick__go">Open MEGA-RAW &rsaquo;</span>
+      </a>
+
+    </div>
+
+    <div class="shared">
+      <div>
+        <h2>Same idea, both consoles</h2>
+        <p>Bus-snoop instead of ROM-patch. Games stay untouched: no IPS file, no
+        injected code, nothing written back into the running game.</p>
+      </div>
+      <div>
+        <h2>Hardcore, honestly</h2>
+        <p>Both tools check your setup before and during a session, and only count
+        Hardcore when the conditions are actually met.</p>
+      </div>
+      <div>
+        <h2>Free to use</h2>
+        <p>The source is public to read and audit, but it is not open source. Each
+        project ships its own license.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Built by <a href="https://github.com/liquid-wq">Liqui</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
