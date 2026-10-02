@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Liqui — RetroAchievements on Real Hardware</title>
 <meta name="author" content="Liqui">
-<meta name="description" content="RetroAchievements on real NES and Mega Drive hardware. Two tools, one idea: a custom FPGA core reads the console's bus while the game runs, so achievements unlock on the actual machine.">
+<meta name="description" content="RetroAchievements on real NES, Mega Drive and Sega Saturn hardware. Three tools, one goal: the flash cartridge reads what the achievement set needs while the game runs, so achievements unlock on the actual machine.">
 <link rel="canonical" href="https://liquid-wq.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Liqui">
 <meta property="og:title" content="RetroAchievements on Real Hardware">
-<meta property="og:description" content="Two tools, one idea: earn RetroAchievements on an actual NES or Mega Drive.">
+<meta property="og:description" content="Three tools, one goal: earn RetroAchievements on an actual NES, Mega Drive or Sega Saturn.">
 <meta property="og:url" content="https://liquid-wq.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="RetroAchievements on Real Hardware">
-<meta name="twitter:description" content="Two tools, one idea: earn RetroAchievements on an actual NES or Mega Drive.">
+<meta name="twitter:description" content="Three tools, one goal: earn RetroAchievements on an actual NES, Mega Drive or Sega Saturn.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -24,11 +24,13 @@
   --ink:#d9cfc4;
   --ink-dim:#7d7267;
   --line:#221a15;
-  /* zwei Phosphorfarben: gruen fuer den NES, bernstein fuer das Mega Drive */
+  /* Phosphorfarben: gruen fuer den NES, bernstein fuer das Mega Drive,
+     blau fuer die Saturn */
   --nes:#38e07b;
   --nes-deep:#0a1a10;
   --md:#ffb454;
   --md-deep:#1a1008;
+  --sat:#5cc8ff;
   --red:#ff5a3c;
 }
 *{box-sizing:border-box}
@@ -67,12 +69,14 @@ h1{
 }
 h1 b{color:var(--md);font-weight:500}
 h1 i{color:var(--nes);font-style:normal;font-weight:500}
+h1 u{color:var(--sat);text-decoration:none;font-weight:500}
 .sub{max-width:60ch;margin:20px auto 0;color:var(--ink-dim);font-size:15.5px}
 
-/* ---------- die beiden Kacheln ---------- */
+/* ---------- die Kacheln ---------- */
 main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
 .picks{display:grid;gap:20px;width:100%}
 @media(min-width:820px){.picks{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.picks{grid-template-columns:1fr 1fr 1fr}}
 
 .pick{
   position:relative;display:block;text-decoration:none;color:inherit;
@@ -90,6 +94,8 @@ main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
 .pick--nes:hover,.pick--nes:focus-visible{border-color:var(--nes);box-shadow:0 0 34px rgba(56,224,123,.16)}
 .pick--md{--glow:rgba(255,180,84,.16)}
 .pick--md:hover,.pick--md:focus-visible{border-color:var(--md);box-shadow:0 0 34px rgba(255,180,84,.16)}
+.pick--sat{--glow:rgba(92,200,255,.16)}
+.pick--sat:hover,.pick--sat:focus-visible{border-color:var(--sat);box-shadow:0 0 34px rgba(92,200,255,.16)}
 
 .pick__console{
   position:relative;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
@@ -101,6 +107,7 @@ main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
 }
 .pick--nes .logo{color:var(--nes);text-shadow:0 0 8px rgba(56,224,123,.5),0 0 24px rgba(56,224,123,.28)}
 .pick--md .logo{color:var(--md);text-shadow:0 0 8px rgba(255,180,84,.5),0 0 24px rgba(255,90,60,.28)}
+.pick--sat .logo{color:var(--sat);text-shadow:0 0 8px rgba(92,200,255,.5),0 0 24px rgba(92,200,255,.28)}
 
 .pick__text{position:relative;margin:20px 0 0;font-size:14.5px;line-height:1.72;color:var(--ink-dim)}
 .pick__text b{color:var(--ink);font-weight:500}
@@ -111,6 +118,7 @@ main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
 }
 .pick--nes .pick__go{color:var(--nes)}
 .pick--md .pick__go{color:var(--md)}
+.pick--sat .pick__go{color:var(--sat)}
 .pick:hover .pick__go{border-color:currentColor}
 
 /* ---------- gemeinsamer Unterbau ---------- */
@@ -135,12 +143,12 @@ footer a:hover{border-color:var(--md)}
 
 <header>
   <div class="wrap">
-    <p class="eyebrow"><span class="slash">//</span> EverDrive &middot; FPGA &middot; RetroAchievements</p>
-    <h1>Earn RetroAchievements on an actual <i>NES</i> or <b>Mega Drive</b>.</h1>
+    <p class="eyebrow"><span class="slash">//</span> Flash cartridges &middot; Real hardware &middot; RetroAchievements</p>
+    <h1>Earn RetroAchievements on an actual <i>NES</i>, <b>Mega Drive</b> or <u>Saturn</u>.</h1>
     <p class="sub">
-      No emulator, no ROM patch. A custom FPGA core inside the flash cartridge reads
-      the console's bus while the game runs, and your PC evaluates the achievement
-      conditions from what it sees. Pick your console.
+      No emulator, no ROM patch. The flash cartridge reads what the achievement set
+      needs while the game runs, and your PC evaluates the achievement conditions
+      from what it sees. Pick your console.
     </p>
   </div>
 </header>
@@ -170,18 +178,30 @@ footer a:hover{border-color:var(--md)}
         <span class="pick__go">Open MEGA-RAW &rsaquo;</span>
       </a>
 
+      <a class="pick pick--sat" href="https://liquid-wq.github.io/raw-turn/">
+        <p class="pick__console">Sega Saturn</p>
+        <p class="logo">RAW-TURN</p>
+        <p class="pick__text">
+          For the <b>SAROO</b>. A small addition to its firmware reads the Saturn's
+          work RAM every single frame, and the program patches the SD card for you.
+        </p>
+        <span class="pick__go">Open RAW-TURN &rsaquo;</span>
+      </a>
+
     </div>
 
     <div class="shared">
       <div>
-        <h2>Same idea, both consoles</h2>
-        <p>Bus-snoop instead of ROM-patch. Games stay untouched: no IPS file, no
-        injected code, nothing written back into the running game.</p>
+        <h2>Games stay unpatched</h2>
+        <p>No IPS file, no patched disc image. On the NES and the Mega Drive an FPGA
+        core reads the console's bus, nothing is written back into the running game.
+        The Saturn's work RAM is out of the cartridge's reach, so there the SAROO
+        firmware reads it once per frame.</p>
       </div>
       <div>
         <h2>Hardcore: planned</h2>
         <p>Not active yet: RetroAchievements only counts Hardcore unlocks from
-        approved clients. Both tools are still too new to be considered and still
+        approved clients. The tools are still too new to be considered and still
         have to pass a set of checks. Until then, unlocks are recorded as Softcore.</p>
       </div>
       <div>
