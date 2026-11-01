@@ -127,6 +127,20 @@ main{flex:1;display:flex;align-items:center;padding:44px 0 20px}
 .pick--sat .pick__go{color:var(--sat)}
 .pick:hover .pick__go{border-color:currentColor}
 
+/* Ausblick: keine Verlinkung, ueber beide Spalten, ruhiger als die Kacheln */
+.pick--dc{
+  grid-column:1/-1;align-items:center;text-align:center;padding:26px 28px 24px;
+  border-style:dashed;--glow:rgba(120,140,255,.10);
+}
+.pick--dc:hover{transform:none}
+.pick--dc .pick__console{margin-bottom:14px}
+.pick--dc .logo{
+  background:linear-gradient(90deg,#4f8fe0 0%,#8a86c8 50%,#e8914a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:saturate(.8) drop-shadow(0 0 10px rgba(110,130,230,.22));
+}
+.pick--dc .pick__text{margin-top:14px;font-style:italic}
+
 /* ---------- gemeinsamer Unterbau ---------- */
 .shared{
   border-top:1px solid var(--line);margin-top:44px;padding:34px 0 0;
@@ -203,6 +217,12 @@ footer a:hover{border-color:var(--md)}
         </p>
         <span class="pick__go">Open RAW-TURN &rsaquo;</span>
       </a>
+
+      <div class="pick pick--dc">
+        <p class="pick__console">Dreamcast &middot; in development</p>
+        <p class="logo">DREAM-RAW</p>
+        <p class="pick__text">Let's dream it will happen.</p>
+      </div>
 
     </div>
 
