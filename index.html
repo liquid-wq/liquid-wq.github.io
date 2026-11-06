@@ -181,9 +181,9 @@ footer a:hover{border-color:var(--md)}
         <p class="pick__console">NES &middot; Famicom</p>
         <p class="logo">RAW-NES</p>
         <p class="pick__text">
-          For the <b>EverDrive N8 PRO</b>. The core mirrors the NES's internal RAM in
-          real time as the CPU writes to it, so the game runs exactly as it would
-          without it.
+          For the <b>EverDrive N8 PRO</b>. One program file with the cores built in.
+          The game is detected exactly, every frame is evaluated, and the game runs
+          exactly as it would without it.
         </p>
         <span class="pick__go">Open RAW-NES &rsaquo;</span>
       </a>
@@ -192,8 +192,8 @@ footer a:hover{border-color:var(--md)}
         <p class="pick__console">Super Nintendo &middot; Super Famicom</p>
         <p class="logo">RAW-SNES</p>
         <p class="pick__text">
-          For the <b>FXPak Pro</b>. The cartridge keeps a live copy of the console's
-          work RAM as the game runs. <b>One program</b>, connected directly over USB. A master version with save states that keep their sound is finished, but not released yet.
+          For the <b>FXPak Pro</b>. The cartridge passes the values the achievement
+          set needs to your PC as the game runs. <b>One program</b>, connected directly over USB. A master version with save states that keep their sound is finished, but not released yet.
         </p>
         <span class="pick__go">Open RAW-SNES &rsaquo;</span>
       </a>
@@ -202,8 +202,9 @@ footer a:hover{border-color:var(--md)}
         <p class="pick__console">Mega Drive &middot; Genesis</p>
         <p class="logo">MEGA-RAW</p>
         <p class="pick__text">
-          For the <b>Mega EverDrive</b>. The cartridge identifies itself, so there is
-          nothing to select — and it brings its own in-game save state menu along.
+          For the <b>Mega EverDrive</b>. One program file with the cores built in. The
+          cartridge identifies itself, so there is nothing to select — and it brings
+          its own in-game save state menu along.
         </p>
         <span class="pick__go">Open MEGA-RAW &rsaquo;</span>
       </a>
@@ -212,8 +213,8 @@ footer a:hover{border-color:var(--md)}
         <p class="pick__console">Sega Saturn</p>
         <p class="logo">RAW-TURN</p>
         <p class="pick__text">
-          For the <b>SAROO</b>. A small addition to its firmware reads the Saturn's
-          work RAM every single frame, and the program patches the SD card for you.
+          For the <b>SAROO</b>. A small addition to its firmware hands the values to
+          your PC every single frame, and the program sets up the SD card for you.
         </p>
         <span class="pick__go">Open RAW-TURN &rsaquo;</span>
       </a>
@@ -229,10 +230,8 @@ footer a:hover{border-color:var(--md)}
     <div class="shared">
       <div>
         <h2>Games stay unpatched</h2>
-        <p>No IPS file, no patched disc image. On the NES, the Super Nintendo and the Mega Drive an FPGA
-        core reads the console's bus, nothing is written back into the running game.
-        The Saturn's work RAM is out of the cartridge's reach, so there the SAROO
-        firmware reads it once per frame.</p>
+        <p>No IPS file, no patched disc image. The games run exactly as they would
+        without the tools, and nothing is written back into a running game.</p>
       </div>
       <div>
         <h2>Hardcore: planned</h2>
